@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Bingo" />
+    <meta name="theme-color" content="#000000" />
+    <title>Bingo - Game Arena</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231c1c1e'/%3E%3Ccircle cx='50' cy='50' r='38' fill='%230a84ff'/%3E%3Ctext x='50' y='62' font-family='system-ui' font-size='28' font-weight='800' text-anchor='middle' fill='white'%3EBINGO%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="bingo-app">
+      <header class="brand">
+        <div class="brand-left">
+          <a href="../../index.html" class="back-link">&larr; Game Arena</a>
+          <p class="eyebrow">Number Game</p>
+          <h1>Bingo</h1>
+          <p class="subtext">
+            Classic 5x5 Bingo. Match numbers, complete a line, and claim your win.
+          </p>
+        </div>
+        <div class="status-pill" id="connectionStatus">Local</div>
+      </header>
+
+      <!-- Setup Panel -->
+      <section class="panel setup" id="setupPanel">
+        <div class="mode-toggle" role="tablist" aria-label="Game modes">
+          <button
+            class="mode-btn active"
+            data-mode="local"
+            type="button"
+            role="tab"
+            aria-selected="true"
+          >
+            Single Player
+          </button>
+          <button
+            class="mode-btn"
+            data-mode="online"
+            type="button"
+            role="tab"
+            aria-selected="false"
+          >
+            Online Room
+          </button>
+        </div>
+
+        <!-- Local Setup -->
+        <div class="mode-body" id="localSetup" role="tabpanel">
+          <div class="setup-grid">
+            <div class="card-panel">
+              <h2>Setup</h2>
+              <label class="field">
+                <span>Your name</span>
+                <input id="localName" type="text" placeholder="Player name" value="Player" />
+              </label>
+              <label class="field">
+                <span>Number of Bots</span>
+                <div class="stepper">
+                  <button id="playerMinus" type="button">-</button>
+                  <span id="playerCount">3</span>
+                  <button id="playerPlus" type="button">+</button>
+                </div>
+              </label>
+            </div>
+
+            <div class="card-panel">
+              <h2>Options</h2>
+              <label class="switch">
+                <input id="localSpectator" type="checkbox" />
+                <span>Spectator Mode (watch bots play)</span>
+              </label>
+              <label class="field">
+                <span>Auto-call speed (seconds)</span>
+                <div class="stepper">
+                  <button id="speedMinus" type="button">-</button>
+                  <span id="callSpeed">3</span>
+                  <button id="speedPlus" type="button">+</button>
+                </div>
+              </label>
+              <button id="startLocal" class="primary" type="button">
+                Start Game
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Online Setup -->
+        <div class="mode-body hidden" id="onlineSetup" role="tabpanel">
+          <div class="setup-grid">
+            <div class="card-panel">
+              <h2>Connect</h2>
+              <label class="field">
+                <span>Your name</span>
+                <input id="onlineName" type="text" placeholder="Player name" />
+              </label>
+              <label class="field">
+                <span>Server URL</span>
+                <input id="serverUrl" type="text" placeholder="Auto-detected" />
+              </label>
+              <label class="field">
+                <span>Room code</span>
+                <input id="roomCode" type="text" placeholder="e.g. F9K2Q" />
+              </label>
+              <div class="button-row">
+                <button id="createRoom" class="primary" type="button">
+                  Create Room
+                </button>
+                <button id="joinRoom" type="button">Join Room</button>
+              </div>
+              <p class="hint">
+                Run the server to enable online play, then share the room code.
+              </p>
+            </div>
+
+            <div class="card-panel hidden" id="onlineLobby">
+              <div class="lobby-header">
+                <div>
+                  <p class="eyebrow">Room</p>
+                  <h3 id="roomDisplay">----</h3>
+                </div>
+                <div class="lobby-actions">
+                  <button id="copyRoom" type="button">Copy Code</button>
+                  <button id="shareLan" type="button" class="accent">Share LAN Link</button>
+                </div>
+              </div>
+              <div class="lobby-players" id="lobbyPlayers"></div>
+              <div class="lobby-actions">
+                <button id="addBot" type="button">Add Bot</button>
+                <button id="startOnline" class="primary" type="button">
+                  Start Game
+                </button>
+                <button id="leaveRoom" type="button">Leave Room</button>
+              </div>
+              <p class="hint" id="hostHint">
+                Only the host can start the game.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Game Panel -->
+      <section class="panel game hidden" id="gamePanel">
+        <div class="game-top">
+          <div class="game-info">
+            <div class="game-info-card">
+              <h2 id="gameStatus">Waiting...</h2>
+              <p id="gameHint">Game will begin shortly</p>
+            </div>
+          </div>
+          <div class="game-actions">
+            <button id="callNumberBtn" class="primary" type="button" disabled>Call Number</button>
+            <button id="claimBingoBtn" class="bingo-claim" type="button" disabled>BINGO!</button>
+            <button id="restartBtn" type="button">New Game</button>
+          </div>
+        </div>
+
+        <!-- Current Number -->
+        <div class="current-number-area">
+          <div class="current-number-label">Current Number</div>
+          <div class="current-number-ball empty" id="currentBall">
+            <span class="ball-letter" id="ballLetter">-</span>
+            <span class="ball-number" id="ballNumber">-</span>
+          </div>
+          <div class="numbers-remaining" id="numbersRemaining">75 numbers remaining</div>
+        </div>
+
+        <!-- Game Layout -->
+        <div class="game-layout">
+          <div class="game-main">
+            <!-- Bingo Card -->
+            <div class="bingo-card-area">
+              <div class="bingo-card-label" id="cardLabel">Your Card</div>
+              <div class="bingo-card" id="bingoCard">
+                <!-- Headers -->
+                <div class="bingo-header col-B">B</div>
+                <div class="bingo-header col-I">I</div>
+                <div class="bingo-header col-N">N</div>
+                <div class="bingo-header col-G">G</div>
+                <div class="bingo-header col-O">O</div>
+                <!-- 25 cells filled by JS -->
+              </div>
+            </div>
+
+            <!-- Called Numbers Board -->
+            <div class="called-numbers-area">
+              <div class="called-numbers-header">
+                <h3>Called Numbers</h3>
+                <span class="called-numbers-count" id="calledCount">0 / 75</span>
+              </div>
+              <div class="called-numbers-grid" id="calledGrid">
+                <!-- Filled by JS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="game-sidebar">
+            <!-- Players -->
+            <div class="card-panel">
+              <h2>Players</h2>
+              <div class="players-list" id="playersList">
+                <!-- Filled by JS -->
+              </div>
+            </div>
+
+            <!-- Game Log -->
+            <div class="game-log" id="gameLog">
+              <h3>Game Log</h3>
+              <div id="logEntries"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Winner overlay -->
+    <div class="winner-banner hidden" id="winnerBanner">
+      <div class="winner-content">
+        <div class="trophy">&#127942;</div>
+        <h2 id="winnerName">BINGO!</h2>
+        <p id="winnerDetail">Game over</p>
+        <button id="winnerNewGame" class="primary" type="button">Play Again</button>
+      </div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

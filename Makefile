@@ -1,7 +1,7 @@
 .PHONY: help install server serve dev open status e2e-open e2e-close clean clean-deps clean-artifacts
 
 help:
-	@echo "UNO Arena commands"
+	@echo "Game Arena commands"
 	@echo "  make install   Install server dependencies"
 	@echo "  make server    Run WebSocket server on :8080"
 	@echo "  make serve     Run static web server on :8000"
