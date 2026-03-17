@@ -1,7 +1,7 @@
-# UNO Arena - Project Context
+# Game Arena - Project Context
 
 ## Project Overview
-UNO Arena is a web-based, multiplayer implementation of the UNO card game. It features a Node.js WebSocket server for real-time online play and a vanilla JavaScript frontend that supports both local "pass-and-play" and online room-based matchmaking.
+Game Arena is a web-based, multiplayer game platform featuring classic nostalgic games. It features a Node.js WebSocket server for real-time online play and vanilla JavaScript frontends that support both local and online room-based matchmaking. Games include UNO, Bingo, and WWE Trump Cards.
 
 ### Core Technologies
 - **Backend:** Node.js, `ws` (WebSocket library).
